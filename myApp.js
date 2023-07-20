@@ -20,7 +20,7 @@ const createAndSavePerson = (done) => {
     age: 30,
     favoriteFoods: ['apple', 'pasta', 'chips']
   });
-  person.save((error, person) => {
+  return person.save((error, person) => {
     if (error) {
       console.log('person.save', error);
       done(error, null);
@@ -32,7 +32,7 @@ const createAndSavePerson = (done) => {
 };
 
 const createManyPeople = (arrayOfPeople, done) => {
-  Person.create(arrayOfPeople, (error, people) => {
+  return Person.create(arrayOfPeople, (error, people) => {
     if (error) {
       console.log('Person.create', error);
       done(error, null);
@@ -43,8 +43,8 @@ const createManyPeople = (arrayOfPeople, done) => {
   });
 };
 
-const findPeopleByName = (personName, done) => {
-  Person.find({ name: personName }, (error, people) => {
+const findPeopleByName = async (personName, done) => {
+  await Person.find({ name: personName }, (error, people) => {
     if (error) {
       console.log('Person.find', error);
       done(error, null);
@@ -55,8 +55,8 @@ const findPeopleByName = (personName, done) => {
   });
 };
 
-const findOneByFood = (food, done) => {
-  Person.findOne({ favoriteFoods: { $in: [food] } }, (error, person) => {
+const findOneByFood = async (food, done) => {
+  await Person.findOne({ favoriteFoods: { $in: [food] } }, (error, person) => {
     if (error) {
       console.log('Person.findOne', error);
       done(error, null);
@@ -67,8 +67,8 @@ const findOneByFood = (food, done) => {
   });
 };
 
-const findPersonById = (personId, done) => {
-  Person.findById(personId, (error, person) => {
+const findPersonById = async (personId, done) => {
+  await Person.findById(personId, (error, person) => {
     if (error) {
       console.log('Person.findById', error);
       done(error, null);
@@ -79,10 +79,30 @@ const findPersonById = (personId, done) => {
   });
 };
 
-const findEditThenSave = (personId, done) => {
-  const foodToAdd = "hamburger";
-
-  done(null /*, data*/);
+const findEditThenSave = async (personId, done) => {
+  await findPersonById(personId, async (error, person) => {
+    if (error) {
+      console.log(error);
+      done(error, null);
+      return;
+    }
+    if (!person) {
+      console.log('Person not found');
+      done(new Error('Person not found'), null);
+      return;
+    }
+    const foodToAdd = 'hamburger';
+    person.favoriteFoods.push(foodToAdd);
+    await person.save((error, person) => {
+      if (error) {
+        console.log(error);
+        done(error, null);
+        return;
+      }
+      console.log(person);
+      done(null, person);
+    });
+  });
 };
 
 const findAndUpdate = (personName, done) => {

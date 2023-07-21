@@ -139,10 +139,17 @@ var removeById = function(personId, done) {
   ); 
 };
 
-const removeManyPeople = (done) => {
-  const nameToRemove = "Mary";
-
-  done(null /*, data*/);
+const removeManyPeople = async (done) => {
+  const nameToRemove = 'Mary';
+  await Person.remove({ name: nameToRemove }, (error, outcome) => {
+    if (error) {
+      console.log('Person.remove', error);
+      done(error, null);
+      return;
+    }
+    console.log('Person.remove', outcome);
+    done(null, outcome);
+  });
 };
 
 const queryChain = (done) => {

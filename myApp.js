@@ -152,10 +152,18 @@ const removeManyPeople = async (done) => {
   });
 };
 
-const queryChain = (done) => {
-  const foodToSearch = "burrito";
-
-  done(null /*, data*/);
+const queryChain = async (done) => {
+  const foodToSearch = 'burrito';
+  const onExec = (error, people) => {
+    if (error) {
+      console.log(error);
+      done(error, null);
+      return;
+    }
+    console.log(people);
+    done(null, people);
+  };
+  await Person.find({ favoriteFoods: { $in: [foodToSearch] } }).sort('name').limit(2).select('-age').exec(onExec);
 };
 
 /** **Well Done !!**

@@ -118,16 +118,25 @@ const findAndUpdate = async (personName, done) => {
   });
 };
 
-const removeById = async (personId, done) => {
-  await Person.findByIdAndRemove(personId, (error, person) => {
-    if (error) {
-      console.log('Person.findByIdAndRemove', error);
-      done(error, null);
-      return;
+// const removeById = async (personId, done) => {
+//   await Person.findByIdAndRemove(personId, (error, person) => {
+//     if (error) {
+//       console.log('Person.findByIdAndRemove', error);
+//       done(error, null);
+//       return;
+//     }
+//     console.log('Person.findByIdAndRemove', person);
+//     done(null, person);
+//   });
+// };
+var removeById = function(personId, done) {
+  Person.findByIdAndRemove(
+    personId,
+    (err, removedDoc) => {
+      if(err) return console.log(err);
+      done(null, removedDoc);
     }
-    console.log('Person.findByIdAndRemove', person);
-    done(null, person);
-  });
+  ); 
 };
 
 const removeManyPeople = (done) => {

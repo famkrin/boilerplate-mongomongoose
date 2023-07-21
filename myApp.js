@@ -80,7 +80,7 @@ const findPersonById = async (personId, done) => {
 };
 
 const findEditThenSave = async (personId, done) => {
-  await findPersonById(personId, async (error, person) => {
+  await findPeopleByName(personId, async (error, person) => {
     if (error) {
       console.log(error);
       done(error, null);
@@ -105,10 +105,17 @@ const findEditThenSave = async (personId, done) => {
   });
 };
 
-const findAndUpdate = (personName, done) => {
+const findAndUpdate = async (personName, done) => {
   const ageToSet = 20;
-
-  done(null /*, data*/);
+  await Person.findOneAndUpdate({ name: personName }, { age: ageToSet }, { new: true }, (error, person) => {
+    if (error) {
+      console.log('Person.findOneAndUpdate', error);
+      done(error, null);
+      return;
+    }
+    console.log('Person.findOneAndUpdate', person);
+    done(null, person);
+  });
 };
 
 const removeById = (personId, done) => {
